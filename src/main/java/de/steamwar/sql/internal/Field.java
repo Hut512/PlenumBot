@@ -28,7 +28,10 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Field {
     String[] keys() default {};
+
     String def() default "";
+
     boolean nullable() default false;
+
     boolean autoincrement() default false;
 }

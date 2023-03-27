@@ -59,7 +59,7 @@ public class SelectStatement<T> extends Statement {
 
     private T read(ResultSet rs) throws SQLException {
         Object[] params = new Object[table.fields.length];
-        for(int i = 0; i < params.length; i++) {
+        for (int i = 0; i < params.length; i++) {
             params[i] = table.fields[i].read(rs);
         }
 

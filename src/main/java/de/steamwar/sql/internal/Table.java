@@ -22,7 +22,10 @@ package de.steamwar.sql.internal;
 import java.lang.reflect.Constructor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -62,6 +65,7 @@ public class Table<T> {
     public SelectStatement<T> select(String name) {
         return selectFields(keyFields(name));
     }
+
     public SelectStatement<T> selectFields(String... kfields) {
         return new SelectStatement<>(this, kfields);
     }
@@ -108,7 +112,7 @@ public class Table<T> {
                 "CREATE TABLE IF NOT EXISTS " + name + "(" +
                         Arrays.stream(fields).map(field -> field.identifier + " " + field.mapper.sqlType() + (field.field.nullable() ? " DEFAULT NULL" : " NOT NULL") + (field.field.nullable() || field.field.def().equals("") ? "" : " DEFAULT " + field.field.def())).collect(Collectors.joining(", ")) +
                         keys.entrySet().stream().map(key -> (key.getKey().equals(PRIMARY) ? ", PRIMARY KEY(" : ", UNIQUE (") + Arrays.stream(key.getValue()).map(field -> field.identifier).collect(Collectors.joining(", ")) + ")").collect(Collectors.joining(" ")) +
-                ")")) {
+                        ")")) {
             statement.update();
         }
     }

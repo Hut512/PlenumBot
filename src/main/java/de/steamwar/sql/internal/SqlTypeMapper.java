@@ -39,7 +39,7 @@ public final class SqlTypeMapper<T> {
         T[] enumConstants = type.getEnumConstants();
         new SqlTypeMapper<>(
                 type,
-                "INTEGER(" + (int)Math.ceil(enumConstants.length/256.0) + ")",
+                "INTEGER(" + (int) Math.ceil(enumConstants.length / 256.0) + ")",
                 (rs, identifier) -> enumConstants[rs.getInt(identifier)],
                 (st, index, value) -> st.setInt(index, value.ordinal())
         );

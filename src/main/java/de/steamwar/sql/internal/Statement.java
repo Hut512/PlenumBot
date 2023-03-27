@@ -19,8 +19,6 @@
 
 package de.steamwar.sql.internal;
 
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -53,7 +51,7 @@ public class Statement implements AutoCloseable {
         File file = new File(System.getProperty("user.home"), "mysql.properties");
         MYSQL_MODE = file.exists();
 
-        if(MYSQL_MODE) {
+        if (MYSQL_MODE) {
             Properties properties = new Properties();
             try {
                 properties.load(new FileReader(file));
@@ -76,7 +74,8 @@ public class Statement implements AutoCloseable {
                     throw new SecurityException("Could not create MySQL connection", e);
                 }
             };
-            schemaCreator = table -> {};
+            schemaCreator = table -> {
+            };
             ON_DUPLICATE_KEY = " ON DUPLICATE KEY UPDATE ";
             upsertWrapper = f -> f + " = VALUES(" + f + ")";
             NULL_SAFE_EQUALS = " <=> ";
@@ -104,8 +103,8 @@ public class Statement implements AutoCloseable {
 
     public static void closeAll() {
         synchronized (connections) {
-            while(connectionBudget < MAX_CONNECTIONS) {
-                if(connections.isEmpty())
+            while (connectionBudget < MAX_CONNECTIONS) {
+                if (connections.isEmpty())
                     waitOnConnections();
                 else
                     closeConnection(aquireConnection());
@@ -170,7 +169,7 @@ public class Statement implements AutoCloseable {
         try {
             result = tryWithConnection(connection, runnable, objects);
         } catch (Throwable e) {
-            if(connectionInvalid(connection)) {
+            if (connectionInvalid(connection)) {
                 closeConnection(connection);
 
                 return withConnection(runnable, objects);
@@ -203,8 +202,8 @@ public class Statement implements AutoCloseable {
 
     private <T> T tryWithConnection(Connection connection, SQLRunnable<T> runnable, Object... objects) throws SQLException {
         PreparedStatement st = cachedStatements.get(connection);
-        if(st == null) {
-            if(returnGeneratedKeys)
+        if (st == null) {
+            if (returnGeneratedKeys)
                 st = connection.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
             else
                 st = connection.prepareStatement(sql);
@@ -213,10 +212,10 @@ public class Statement implements AutoCloseable {
 
         for (int i = 0; i < objects.length; i++) {
             Object o = objects[i];
-            if(o != null)
-                SqlTypeMapper.getMapper(o.getClass()).write(st, i+1, o);
+            if (o != null)
+                SqlTypeMapper.getMapper(o.getClass()).write(st, i + 1, o);
             else
-                st.setNull(i+1, Types.NULL);
+                st.setNull(i + 1, Types.NULL);
         }
 
         return runnable.run(st);
@@ -233,16 +232,16 @@ public class Statement implements AutoCloseable {
 
     private void close(Connection connection) {
         PreparedStatement st = cachedStatements.remove(connection);
-        if(st != null)
+        if (st != null)
             closeStatement(st, true);
     }
 
     private static Connection aquireConnection() {
         synchronized (connections) {
-            while(connections.isEmpty() && connectionBudget <= 0)
+            while (connections.isEmpty() && connectionBudget <= 0)
                 waitOnConnections();
 
-            if(!connections.isEmpty()) {
+            if (!connections.isEmpty()) {
                 return connections.pop();
             } else {
                 Connection connection = conProvider.get();
@@ -284,7 +283,7 @@ public class Statement implements AutoCloseable {
         try {
             st.close();
         } catch (SQLException e) {
-            if(!silent)
+            if (!silent)
                 logger.log(Level.INFO, "Could not close statement", e);
         }
     }
