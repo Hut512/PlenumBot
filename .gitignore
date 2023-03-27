@@ -1,0 +1,21 @@
+# IntelliJ IDEA files
+.idea/
+
+# Compiled class files
+target/
+
+# Generated source files
+src/generated/
+
+# Log files
+*.log
+
+# Maven build files
+*.jar
+*.war
+*.ear
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+bot.properties
