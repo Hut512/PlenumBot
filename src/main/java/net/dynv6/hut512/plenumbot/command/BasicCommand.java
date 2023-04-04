@@ -17,17 +17,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot;
+package net.dynv6.hut512.plenumbot.command;
 
-import lombok.Getter;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 
-public class Main {
-    private static final String BOT_CONFIG_FILE_NAME = "bot.properties";
-
-    @Getter
-    String test;
-
-    public static void main(String[] args) {
-        new PlenumBot(BOT_CONFIG_FILE_NAME);
+public abstract class BasicCommand extends CommandDataImpl {
+    public BasicCommand(String name, String description) {
+        super(name, description);
     }
+
+    public abstract void onSlashCommandInteraction(SlashCommandInteractionEvent event);
 }

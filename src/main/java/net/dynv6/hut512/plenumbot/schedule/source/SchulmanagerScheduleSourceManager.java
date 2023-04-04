@@ -17,15 +17,27 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot.elternportal;
+package net.dynv6.hut512.plenumbot.schedule.source;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import net.dynv6.hut512.plenumbot.schedule.ScheduleInfo;
+import org.apache.http.auth.InvalidCredentialsException;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
-public interface ScheduleScraper {
-    public void scrape() throws IOException;
+public class SchulmanagerScheduleSourceManager implements ScheduleSourceManager {
+    @Override
+    public void shutdown() {
 
-    public LocalDateTime getLastEdited();
+    }
 
-    public Schedule getSchedule();
+    @Override
+    public String getName() {
+        return "schulmanager";
+    }
+
+    @Override
+    public ScheduleInfo loadScheduleInfo(ObjectNode options) throws InvalidCredentialsException, IOException {
+        return null;
+    }
 }

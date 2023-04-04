@@ -17,8 +17,19 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot.elternportal;
+package net.dynv6.hut512.plenumbot.listener;
 
-public class Schedule {
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dynv6.hut512.plenumbot.PlenumBot;
+import net.dynv6.hut512.plenumbot.command.BasicCommand;
 
+public class CommandListener extends ListenerAdapter {
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        BasicCommand command = PlenumBot.getInstance().getCommand(event.getName());
+        if (command != null) {
+            command.onSlashCommandInteraction(event);
+        }
+    }
 }

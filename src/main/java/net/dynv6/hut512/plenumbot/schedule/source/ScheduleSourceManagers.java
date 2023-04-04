@@ -17,12 +17,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot.listener;
+package net.dynv6.hut512.plenumbot.schedule.source;
 
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dynv6.hut512.plenumbot.schedule.ScheduleInfoManager;
 
-public class MusicListener extends ListenerAdapter {
-    public MusicListener() {
+public class ScheduleSourceManagers {
 
+    public static void registerSources(ScheduleInfoManager infoManager) {
+        infoManager.registerSourceManager(new ElternportalScheduleSourceManager());
     }
 }

@@ -17,17 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot;
+package net.dynv6.hut512.plenumbot.command;
 
-import lombok.Getter;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class Main {
-    private static final String BOT_CONFIG_FILE_NAME = "bot.properties";
+public class PingCommand extends BasicCommand {
+    public PingCommand() {
+        super("ping", "get the ping of the bot");
+    }
 
-    @Getter
-    String test;
-
-    public static void main(String[] args) {
-        new PlenumBot(BOT_CONFIG_FILE_NAME);
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        event.reply(event.getJDA().getGatewayPing() + "ms").setEphemeral(true).queue();
     }
 }

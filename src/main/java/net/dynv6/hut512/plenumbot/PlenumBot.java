@@ -22,8 +22,11 @@ package net.dynv6.hut512.plenumbot;
 import lombok.Getter;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dynv6.hut512.plenumbot.elternportal.SubstitutionPlanMessageUpdater;
-import net.dynv6.hut512.plenumbot.listener.MusicListener;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dynv6.hut512.plenumbot.command.BasicCommand;
+import net.dynv6.hut512.plenumbot.command.PingCommand;
+import net.dynv6.hut512.plenumbot.listener.CommandListener;
+import net.dynv6.hut512.plenumbot.listener.MusicInterfaceListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,32 +35,48 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
 public class PlenumBot {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlenumBot.class);
+
+    public static final String VERSION = "PlenumBot v0.1";
+    public static final String URL = "https://hut512.dynv6.net/plenumbot";
     @Getter
     private static PlenumBot instance;
 
     @Getter
     private final JDA jda;
+    private final Map<String, BasicCommand> commandMap;
     @Getter
     private final Properties config;
 
     public PlenumBot(String configFileName) {
         PlenumBot.instance = this;
+        commandMap = new HashMap<>();
         config = loadConfig(configFileName);
         JDABuilder builder = JDABuilder.createDefault(config.getProperty("TOKEN"));
-        builder.addEventListeners(new MusicListener());
+        builder.enableIntents(GatewayIntent.MESSAGE_CONTENT);
+        builder.addEventListeners(new CommandListener(), new MusicInterfaceListener());
         jda = builder.build();
         try {
             jda.awaitReady();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        new SubstitutionPlanMessageUpdater();
+        new ScheduleInfoUpdater();
+        addCommands(new PingCommand());
         LOGGER.info("Bot Ready!");
+    }
+
+    private void addCommands(BasicCommand... commands) {
+        for (BasicCommand command : commands) {
+            commandMap.put(command.getName(), command);
+        }
+        jda.updateCommands().addCommands(commands).queue();
     }
 
     private Properties loadConfig(String fileName) {
@@ -78,5 +97,9 @@ public class PlenumBot {
         } catch (URISyntaxException | IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public BasicCommand getCommand(String name) {
+        return commandMap.get(name);
     }
 }

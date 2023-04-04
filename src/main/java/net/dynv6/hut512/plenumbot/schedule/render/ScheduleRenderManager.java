@@ -17,17 +17,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot;
+package net.dynv6.hut512.plenumbot.schedule.render;
 
-import lombok.Getter;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import net.dynv6.hut512.plenumbot.schedule.ScheduleInfo;
+import org.jetbrains.annotations.Nullable;
 
-public class Main {
-    private static final String BOT_CONFIG_FILE_NAME = "bot.properties";
+import java.awt.image.BufferedImage;
 
-    @Getter
-    String test;
+public interface ScheduleRenderManager {
+    void shutdown();
 
-    public static void main(String[] args) {
-        new PlenumBot(BOT_CONFIG_FILE_NAME);
-    }
+    String getName();
+
+    BufferedImage render(@Nullable ScheduleInfo scheduleInfo, ObjectNode options);
+
+    boolean shouldReRender(@Nullable ScheduleInfo oldScheduleInfo, @Nullable ScheduleInfo newScheduleInfo);
 }

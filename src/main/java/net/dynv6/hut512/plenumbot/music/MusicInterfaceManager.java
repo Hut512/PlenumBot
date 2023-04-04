@@ -17,17 +17,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot;
+package net.dynv6.hut512.plenumbot.music;
 
-import lombok.Getter;
+public class MusicInterfaceManager {
+    public MusicInterfaceManager() {
 
-public class Main {
-    private static final String BOT_CONFIG_FILE_NAME = "bot.properties";
-
-    @Getter
-    String test;
-
-    public static void main(String[] args) {
-        new PlenumBot(BOT_CONFIG_FILE_NAME);
     }
 }

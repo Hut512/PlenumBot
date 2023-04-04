@@ -17,25 +17,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot.elternportal;
+package net.dynv6.hut512.plenumbot.schedule.render;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import net.dynv6.hut512.plenumbot.schedule.ScheduleInfoManager;
 
-public class ScheduleImageGenerator {
-    private BufferedImage image;
-
-    public ScheduleImageGenerator(int width, int height) {
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-    }
-
-    public void generateImage(Schedule schedule) {
-
-    }
-
-    public void writeToFile(File outputFile, String formatName) throws IOException {
-        ImageIO.write(image, formatName, outputFile);
+public class ScheduleRenderManagers {
+    public static void registerRenders(ScheduleInfoManager infoManager) {
+        infoManager.registerRenderManager(new DefaultScheduleRenderManager());
     }
 }

@@ -17,17 +17,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.dynv6.hut512.plenumbot;
+package net.dynv6.hut512.plenumbot.util;
 
-import lombok.Getter;
+import lombok.experimental.UtilityClass;
 
-public class Main {
-    private static final String BOT_CONFIG_FILE_NAME = "bot.properties";
+import java.io.File;
 
-    @Getter
-    String test;
+@UtilityClass
+public class Config {
+    public String TOKEN;
 
-    public static void main(String[] args) {
-        new PlenumBot(BOT_CONFIG_FILE_NAME);
+    public void loadConfig(File file) {
+        //Properties props
     }
 }
