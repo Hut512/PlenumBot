@@ -71,31 +71,31 @@ public class MusicInterfaceListener extends ListenerAdapter {
             case "back" -> {
                 AudioTrack currentTrack = GuildMusicManager.get(event.getGuild().getIdLong()).getPlayer().getPlayingTrack();
                 currentTrack.setPosition(0);
-                event.reply(":thumbsup:").setEphemeral(true).queue();
+                event.reply(":thumbsup:").setEphemeral(true).queue(msg -> msg.deleteOriginal().complete());
             }
             case "rewind" -> {
                 AudioTrack currentTrack = GuildMusicManager.get(event.getGuild().getIdLong()).getPlayer().getPlayingTrack();
                 currentTrack.setPosition(Math.max(currentTrack.getPosition() - TimeUnit.SECONDS.toMillis(30), 0));
-                event.reply(":thumbsup:").setEphemeral(true).queue();
+                event.reply(":thumbsup:").setEphemeral(true).queue(msg -> msg.deleteOriginal().complete());
             }
             case "play" -> {
                 GuildMusicManager.get(event.getGuild().getIdLong()).getScheduler().setPaused(false);
-                event.reply(":thumbsup:").setEphemeral(true).queue();
+                event.reply(":thumbsup:").setEphemeral(true).queue(msg -> msg.deleteOriginal().complete());
                 musicInterfaces.get(event.getGuild().getIdLong()).updateMessage();
             }
             case "pause" -> {
                 GuildMusicManager.get(event.getGuild().getIdLong()).getScheduler().setPaused(true);
-                event.reply(":thumbsup:").setEphemeral(true).queue();
+                event.reply(":thumbsup:").setEphemeral(true).queue(msg -> msg.deleteOriginal().complete());
                 musicInterfaces.get(event.getGuild().getIdLong()).updateMessage();
             }
             case "fast-forward" -> {
                 AudioTrack currentTrack = GuildMusicManager.get(event.getGuild().getIdLong()).getPlayer().getPlayingTrack();
                 currentTrack.setPosition(Math.min(currentTrack.getPosition() + TimeUnit.SECONDS.toMillis(30), currentTrack.getDuration()));
-                event.reply(":thumbsup:").setEphemeral(true).queue();
+                event.reply(":thumbsup:").setEphemeral(true).queue(msg -> msg.deleteOriginal().complete());
             }
             case "continue" -> {
                 GuildMusicManager.get(event.getGuild().getIdLong()).getScheduler().nextTrack();
-                event.reply(":thumbsup:").setEphemeral(true).queue();
+                event.reply(":thumbsup:").setEphemeral(true).queue(msg -> msg.deleteOriginal().complete());
                 musicInterfaces.get(event.getGuild().getIdLong()).updateMessage();
             }
         }
