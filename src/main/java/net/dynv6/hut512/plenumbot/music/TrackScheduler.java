@@ -44,16 +44,17 @@ public class TrackScheduler extends AudioEventAdapter {
         this.leaveTimer = null;
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     public void queue(AudioTrack track) {
         if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
-        setInactive(false);
+        //setInactive(false);
     }
 
     public void nextTrack() {
         player.startTrack(queue.poll(), false);
-        setInactive(false);
+        //setInactive(false);
     }
 
     public void setPaused(boolean paused) {
@@ -63,7 +64,7 @@ public class TrackScheduler extends AudioEventAdapter {
     public void stop() {
         player.stopTrack();
         queue.clear();
-        setInactive(true);
+        //setInactive(true);
     }
 
     public void leave() {
@@ -78,6 +79,7 @@ public class TrackScheduler extends AudioEventAdapter {
         }
     }
 
+    @SuppressWarnings("unused")
     private void setInactive(boolean inactive) {
         if (inactive) {
             if (leaveTimer == null) {

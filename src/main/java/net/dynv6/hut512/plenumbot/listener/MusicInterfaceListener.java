@@ -32,16 +32,15 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dynv6.hut512.plenumbot.PlenumBot;
 import net.dynv6.hut512.plenumbot.music.GuildMusicManager;
 import net.dynv6.hut512.plenumbot.music.MusicInterface;
+import net.dynv6.hut512.plenumbot.music.PlenumAudioPlayerManager;
 import net.dynv6.hut512.plenumbot.sql.GuildConfig;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class MusicInterfaceListener extends ListenerAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MusicInterfaceListener.class);
     private final Map<Long, MusicInterface> musicInterfaces;
 
     public MusicInterfaceListener() {
@@ -63,13 +62,22 @@ public class MusicInterfaceListener extends ListenerAdapter {
                         GuildConfig.getConfig(guild.getIdLong(), GuildConfig.Config.MUSIC_INTERFACE_SHOULD_CLEAR_CHANNEL)));
     }
 
+    @SuppressWarnings("DataFlowIssue")
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (!event.isFromGuild() || event.getButton().getId() == null) return;
 
         switch (event.getButton().getId()) {
-            case "back" -> event.reply("\uD83D\uDEA7").setEphemeral(true).queue();
-            case "rewind" -> event.reply("\uD83D\uDEA7").setEphemeral(true).queue();
+            case "back" -> {
+                AudioTrack currentTrack = GuildMusicManager.get(event.getGuild().getIdLong()).getPlayer().getPlayingTrack();
+                currentTrack.setPosition(0);
+                event.reply(":thumbsup:").setEphemeral(true).queue();
+            }
+            case "rewind" -> {
+                AudioTrack currentTrack = GuildMusicManager.get(event.getGuild().getIdLong()).getPlayer().getPlayingTrack();
+                currentTrack.setPosition(Math.max(currentTrack.getPosition() - TimeUnit.SECONDS.toMillis(30), 0));
+                event.reply(":thumbsup:").setEphemeral(true).queue();
+            }
             case "play" -> {
                 GuildMusicManager.get(event.getGuild().getIdLong()).getScheduler().setPaused(false);
                 event.reply(":thumbsup:").setEphemeral(true).queue();
@@ -80,7 +88,11 @@ public class MusicInterfaceListener extends ListenerAdapter {
                 event.reply(":thumbsup:").setEphemeral(true).queue();
                 musicInterfaces.get(event.getGuild().getIdLong()).updateMessage();
             }
-            case "fast-forward" -> event.reply("\uD83D\uDEA7").setEphemeral(true).queue();
+            case "fast-forward" -> {
+                AudioTrack currentTrack = GuildMusicManager.get(event.getGuild().getIdLong()).getPlayer().getPlayingTrack();
+                currentTrack.setPosition(Math.min(currentTrack.getPosition() + TimeUnit.SECONDS.toMillis(30), currentTrack.getDuration()));
+                event.reply(":thumbsup:").setEphemeral(true).queue();
+            }
             case "continue" -> {
                 GuildMusicManager.get(event.getGuild().getIdLong()).getScheduler().nextTrack();
                 event.reply(":thumbsup:").setEphemeral(true).queue();
@@ -115,7 +127,7 @@ public class MusicInterfaceListener extends ListenerAdapter {
             event.getGuild().getAudioManager().setSendingHandler(musicManager.getSendHandler());
         }
 
-        GuildMusicManager.getAUDIO_PLAYER_MANAGER().loadItemOrdered(musicManager, "ytsearch:" + track, new AudioLoadResultHandler() {
+        PlenumAudioPlayerManager.getInstance().loadItemOrdered(musicManager, track, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 musicManager.getScheduler().queue(track);
@@ -125,13 +137,36 @@ public class MusicInterfaceListener extends ListenerAdapter {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                musicManager.getScheduler().queue(playlist.getTracks().get(0));
+                for (AudioTrack track : playlist.getTracks()) {
+                    musicManager.getScheduler().queue(track);
+                }
                 musicInterfaces.get(event.getGuild().getIdLong()).updateMessage();
-                //sendMusicSelectorMessage(event.getGuild(), true, playlist.getTracks().get(0).getInfo().title);
             }
 
             @Override
             public void noMatches() {
+                PlenumAudioPlayerManager.getInstance().loadItemOrdered(musicManager, "ytsearch:" + track, new AudioLoadResultHandler() {
+                    @Override
+                    public void trackLoaded(AudioTrack track) {
+
+                    }
+
+                    @Override
+                    public void playlistLoaded(AudioPlaylist playlist) {
+                        musicManager.getScheduler().queue(playlist.getTracks().get(0));
+                        musicInterfaces.get(event.getGuild().getIdLong()).updateMessage();
+                    }
+
+                    @Override
+                    public void noMatches() {
+
+                    }
+
+                    @Override
+                    public void loadFailed(FriendlyException exception) {
+
+                    }
+                });
             }
 
             @Override

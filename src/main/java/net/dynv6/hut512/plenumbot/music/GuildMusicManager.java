@@ -20,9 +20,6 @@
 package net.dynv6.hut512.plenumbot.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import lombok.Getter;
 
@@ -32,12 +29,6 @@ import java.util.Queue;
 
 public class GuildMusicManager {
     private static final Map<Long, GuildMusicManager> guildMusicManagers = new HashMap<>();
-    @Getter
-    private static final AudioPlayerManager AUDIO_PLAYER_MANAGER = new DefaultAudioPlayerManager();
-
-    static {
-        AudioSourceManagers.registerRemoteSources(AUDIO_PLAYER_MANAGER);
-    }
 
     public static GuildMusicManager get(long guildId) {
         return guildMusicManagers.computeIfAbsent(guildId, k -> new GuildMusicManager());
@@ -49,7 +40,7 @@ public class GuildMusicManager {
     private final TrackScheduler scheduler;
 
     public GuildMusicManager() {
-        player = AUDIO_PLAYER_MANAGER.createPlayer();
+        player = PlenumAudioPlayerManager.getInstance().createPlayer();
         scheduler = new TrackScheduler(player);
         player.addListener(scheduler);
     }
